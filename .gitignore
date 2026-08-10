@@ -20,9 +20,8 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Ignore folders
+# Ignore folder
 todo/
-.codewhale
 
 # exclude tailwind utilites
 libera/static/styles/style.css
