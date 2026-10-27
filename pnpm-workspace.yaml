@@ -1,3 +1,4 @@
 allowBuilds:
+  '@swc/core': false
   sharp: false
   unrs-resolver: false
