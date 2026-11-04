@@ -7,3 +7,5 @@ export type FeedPhoto = {
   storageKey: string
   createdAt: Date
 }
+
+export const MAX_PER_PAGE_LIMIT = 25
