@@ -5,7 +5,6 @@ import { db } from '@/db'
 import { photos } from '@/db/schema'
 import { type FeedPhoto, MAX_PER_PAGE_LIMIT } from './types/photos'
 
-
 export async function getPublicFeed(
   limit = MAX_PER_PAGE_LIMIT,
   offsetPhoto: number
