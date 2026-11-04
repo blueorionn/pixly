@@ -3,18 +3,11 @@ import 'server-only'
 import { and, desc, eq, isNull } from 'drizzle-orm'
 import { db } from '@/db'
 import { photos } from '@/db/schema'
+import { type FeedPhoto } from './types/photos'
 
 export const MAX_PER_PAGE_LIMIT = 25
 
-export type FeedPhoto = {
-  id: string
-  slug: string
-  name: string
-  width: number
-  height: number
-  storageKey: string
-  createdAt: Date
-}
+
 
 export async function getPublicFeed(
   limit = MAX_PER_PAGE_LIMIT,
