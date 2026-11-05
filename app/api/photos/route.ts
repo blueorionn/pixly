@@ -7,8 +7,13 @@ import { cdnUrl } from '@/utils/cdn'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
 
-  const limit = Number(searchParams.get('limit') ?? MAX_PER_PAGE_LIMIT)
-  const offset = Number(searchParams.get('offset') ?? 0)
+  const rawLimit = Number(searchParams.get('limit') ?? MAX_PER_PAGE_LIMIT)
+  const limit = Number.isFinite(rawLimit)
+    ? Math.min(Math.max(Math.floor(rawLimit), 1), MAX_PER_PAGE_LIMIT)
+    : MAX_PER_PAGE_LIMIT
+  const rawOffset = Number(searchParams.get('offset') ?? 0)
+  const offset =
+    Number.isFinite(rawOffset) && rawOffset >= 0 ? Math.floor(rawOffset) : 0
 
   const photos = await getPublicFeed(limit, offset)
   const data = photos.map((photo) => ({
