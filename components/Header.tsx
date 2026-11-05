@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Sun, Moon, GalleryHorizontal, Search, User } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { useThemeProvider } from '@/context/ThemeContext'
 
 // shared look for the header icon buttons — hairline box, muted glyph
@@ -32,19 +32,28 @@ export default function Header() {
 
         <div className='ml-auto flex w-max items-center justify-center gap-2'>
           <div className='hidden items-center gap-2 sm:flex'>
-            <Button variant='ghost' size='icon' className={ICON_BUTTON_CLASS}>
-              <Link href='/search' aria-label='Search photos'>
-                <Search className='size-4' />
-              </Link>
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              aria-label='scroll'
-              className={ICON_BUTTON_CLASS}
+            <Link
+              href='/search'
+              aria-label='Search photos'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'icon',
+                className: ICON_BUTTON_CLASS,
+              })}
+            >
+              <Search className='size-4' />
+            </Link>
+            <Link
+              href='/scroll'
+              aria-label='Search photos'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'icon',
+                className: ICON_BUTTON_CLASS,
+              })}
             >
               <GalleryHorizontal className='size-4' />
-            </Button>
+            </Link>
             <div
               aria-hidden
               className='bg-foreground/20 dark:bg-foreground/30 mx-1 h-5 w-px shrink-0'
@@ -53,21 +62,29 @@ export default function Header() {
 
           {/* mobile: search, scroll and divider */}
           <div className='flex items-center gap-2 sm:hidden'>
-            <Button variant='ghost' size='icon' className={ICON_BUTTON_CLASS}>
-              <Link href='/search' aria-label='Search photos'>
-                <Search className='size-4' />
-              </Link>
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              aria-label='scroll'
-              className={ICON_BUTTON_CLASS}
+            <Link
+              href='/search'
+              aria-label='Search photos'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'icon',
+                className: ICON_BUTTON_CLASS,
+              })}
             >
-              <Link href='/scroll' aria-label='Search photos'>
-                <GalleryHorizontal className='size-4' />
-              </Link>
-            </Button>
+              <Search className='size-4' />
+            </Link>
+
+            <Link
+              href='/scroll'
+              aria-label='Search photos'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'icon',
+                className: ICON_BUTTON_CLASS,
+              })}
+            >
+              <GalleryHorizontal className='size-4' />
+            </Link>
             <div
               aria-hidden
               className='bg-foreground/20 dark:bg-foreground/30 mx-1 h-5 w-px shrink-0'
