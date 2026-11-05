@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
   const offset = Number(searchParams.get('offset') ?? 0)
 
   const photos = await getPublicFeed(limit, offset)
-  const data = photos.map((photo) => ({ ...photo, storageURL: cdnUrl('') }))
+  const data = photos.map((photo) => ({
+    ...photo,
+    storageURL: cdnUrl(photo.storageKey),
+  }))
 
   return NextResponse.json({
     success: true,
