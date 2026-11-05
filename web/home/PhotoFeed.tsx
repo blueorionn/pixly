@@ -3,21 +3,26 @@
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Spinner } from '@/components/Spinner'
+import { distribute } from './utils'
 import { MAX_PER_PAGE_LIMIT, type FeedPhoto } from '@/lib/queries/types/photos'
 
 const DESKTOP_QUERY = '(min-width: 1024px)'
 
-type UpdatedFeedPhoto = Omit<FeedPhoto, 'createdAt' | 'storageURL'> & {
-  createdAt: Date
+export type APIFeedPhoto = Omit<FeedPhoto, 'createdAt'> & {
+  createdAt: string
   storageURL: string
 }
 
-type PhotosResponse = {
+export type ClientFeedPhoto = Omit<APIFeedPhoto, 'createdAt'> & {
+  createdAt: Date
+}
+
+export type PhotosResponse = {
   success: boolean
   limit: number
   offset: number
   length: number
-  photos: Array<UpdatedFeedPhoto>
+  photos: Array<APIFeedPhoto>
 }
 
 function useColumnCount(): number {
@@ -34,44 +39,11 @@ function useColumnCount(): number {
   return count
 }
 
-/**
- * Greedy shortest-column placement, using each photo's aspect ratio as a
- * height proxy (every column has the same width, so aspect ~ rendered height).
- *
- * The algorithm is prefix-stable: an item's column depends only on the items
- * before it. Appending a new page therefore never moves existing photos —
- * new items only extend the bottom of the shortest column. A full reflow
- * happens only when the column count changes (breakpoint crossing), which is
- * expected. This is why we don't use CSS columns: the browser rebalances the
- * whole container on every insertion and reshuffles everything above the
- * fold.
- */
-function distribute(
-  photos: UpdatedFeedPhoto[] | null,
-  count: number
-): UpdatedFeedPhoto[][] {
-  const columns: UpdatedFeedPhoto[][] = Array.from({ length: count }, () => [])
-  if (!photos) return columns
-
-  const heights = new Array<number>(count).fill(0)
-
-  for (const photo of photos) {
-    let shortest = 0
-    for (let i = 1; i < count; i++) {
-      if (heights[i] < heights[shortest]) shortest = i
-    }
-    columns[shortest].push(photo)
-    heights[shortest] += photo.height / photo.width
-  }
-
-  return columns
-}
-
-function PhotoCard({ photo }: { photo: UpdatedFeedPhoto }) {
+function PhotoCard({ photo }: { photo: ClientFeedPhoto }) {
   return (
     <div className='group border-border relative mb-4 overflow-hidden rounded border'>
       <Image
-        src={`${photo.storageURL}`}
+        src={photo.storageURL}
         alt={photo.name}
         width={photo.width}
         height={photo.height}
@@ -83,7 +55,7 @@ function PhotoCard({ photo }: { photo: UpdatedFeedPhoto }) {
 }
 
 export default function PhotoFeed() {
-  const [photos, setPhotos] = useState<UpdatedFeedPhoto[] | null>(null)
+  const [photos, setPhotos] = useState<ClientFeedPhoto[] | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [isFetching, setIsFetching] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -121,7 +93,7 @@ export default function PhotoFeed() {
         throw new Error('Unexpected response from the server')
       }
 
-      const page: UpdatedFeedPhoto[] = payload.photos.map((photo) => ({
+      const page: ClientFeedPhoto[] = payload.photos.map((photo) => ({
         ...photo,
         createdAt: new Date(photo.createdAt),
       }))
